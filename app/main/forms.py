@@ -42,10 +42,13 @@ class AccountDetailForm(FlaskForm):
 
 
 class AccountFollowUpForm(FlaskForm):
-    loan_numb = StringField("Loan Number", validators=[Optional()], render_kw={"maxlength": "25"})
+    # loan_numb = StringField("Loan Number", validators=[Optional()], render_kw={"maxlength": "25"})
+    loan_numb = SelectField("Loan Number")
     delq_days = StringField("Delinquent Days", validators=[Optional()], render_kw={"maxlength": "20"})
     detail = TextAreaField("Detail", validators=[DataRequired()], render_kw={"maxlength": "5000"})
     submit = SubmitField("Create Follow Up")
+
+
 
 class AccountAlertForm(FlaskForm):
     category = SelectField("Alert Category", choices=[("Bankruptcy","Bankruptcy"), ("Total Loss","Total Loss"), ("Repossession", "Repossession"),("Charged Off Loan", "Charged Off Loan")])

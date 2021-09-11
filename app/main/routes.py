@@ -34,8 +34,8 @@ def display_account(id):
         db.session.commit()
         flash("Detail Added to Account.")
         return redirect(url_for("main.display_account", id=int(id)))
-
-    detail_form.detail.data = acct.detail
+    elif request.method == 'GET':
+        detail_form.detail.data = acct.detail
     return render_template("display_account.html", acct=acct, form=form, detail_form=detail_form)
 
 
@@ -65,7 +65,8 @@ def edit_account(id):
         acct = edit_account_model(form, acct)
         db.session.commit()
         return redirect(url_for("main.display_account", id=int(id)))
-    form = populate_acct_form(form, acct)
+    elif request.method == 'GET':
+        form = populate_acct_form(form, acct)
     return render_template("edit_account.html", form=form)
 
 
@@ -84,6 +85,11 @@ def follow_ups(id):
         db.session.commit()
         flash("Follow Up Successfully Created.")
         return redirect(url_for("main.follow_ups", id=int(id)))
+
+    elif request.method == 'GET':
+        loan_list2 = [(l.loan_numb, l.loan_numb) for l in acct.get_loans()]
+        follow_form.loan_numb.choices = [("all", "all")] + loan_list2
+
     return render_template("follow_ups.html", acct=acct, form=form, follow_form=follow_form)
 
 @bp.route("/follow_view/<id>", methods=["GET", "POST"])
