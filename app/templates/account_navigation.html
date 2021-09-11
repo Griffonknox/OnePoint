@@ -1,0 +1,11 @@
+<div class="btn-group" style="float: right;">
+  <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    Account Navigation <span class="caret"></span>
+  </button>
+  <ul class="dropdown-menu">
+    <li><a href="{{url_for('main.display_account', id=acct.varClientKey)}}">Account Information</a></li>
+    <li><a href="{{url_for('main.follow_ups', id=acct.varClientKey)}}">Account Follow Ups</a></li>
+    <li><a href="{{url_for('main.alerts', id=acct.varClientKey)}}">Account Alerts</a></li>
+    <li><a href="{{url_for('main.loans', id=acct.varClientKey)}}">Account Loans</a></li>
+  </ul>
+</div>

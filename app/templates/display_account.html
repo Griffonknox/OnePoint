@@ -1,0 +1,73 @@
+{% extends 'template.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="row">
+
+        {% include "search_header.html" %}
+
+
+        <div class="col-md-6">
+            <h3>Account Information:</h3>
+        </div>
+
+        <div class="col-md-6">
+            {% include 'account_navigation.html' %}
+        </div>
+
+        <div class="col-md-12 cell">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <p><b>Account #:</b> {{acct.varClientKey}}</p>
+                    <p><b>Member Name:</b> {{acct.first_name}} {{acct.middle_name}} {{acct.last_name}}</p>
+                    <p><b>Physical Address:</b> {{acct.phys_address}} {{acct.phys_city}} {{acct.phys_state}} {{acct.phys_zip}}</p>
+                    <p><b>Mail Address:</b> {{acct.mail_address}} {{acct.mail_city}} {{acct.mail_state}} {{acct.mail_zip}}</p>
+                    <p><b>Member Phone:</b> {{acct.phone}}</p>
+                    <p><b>Member Phone 2:</b> {{acct.phone2}}</p>
+                    <a class="btn btn-sm btn-view" href="{{url_for('main.edit_account', id=acct.varClientKey)}}" style="margin-top: 5px;">Edit Account</a>
+                </div>
+
+                <div class="col-md-6">
+                    <p>Account Detail:</p>
+                        <form action="{{url_for('main.display_account', id=acct.varClientKey)}}" method="post" novalidate style="width: 100%; height; 80%;">
+                        {{ form.hidden_tag() }}
+                        {{detail_form.detail(style="width: 100%; height: 150px;")}}
+                        {{detail_form.submit(class="btn btn-sm btn-view")}}
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <br>
+
+{% if acct.get_alerts() %}
+<div class="modal fade" role="dialog" id="myModal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h3 class="modal-title">Account Alert!!</h3>
+            </div>
+            <div class="modal-body">
+                <p style="color: red; font-size: 16px;">{{acct.get_alerts()[-1].Alert_Detail}}</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-view" data-dismiss="modal">Close</button>
+                <a class="btn btn-view" href="{{url_for('main.alerts', id=acct.varClientKey)}}">View Account Alerts</a>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+$(document).ready( function() {
+    $("#myModal").modal("show");
+});
+</script>
+{% endif %}
+
+{% endblock %}

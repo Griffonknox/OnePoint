@@ -1,0 +1,139 @@
+{% extends 'template.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="row">
+
+        {% include "search_header.html" %}
+
+
+        <div class="col-md-6">
+            <h3>Account Follow Ups:</h3>
+        </div>
+
+        <div class="col-md-6">
+            {% include 'account_navigation.html' %}
+        </div>
+
+        <div class="col-md-12 cell">
+            <div class="row">
+
+                <div class="col-md-6">
+                    <p><b>Account #:</b> {{acct.varClientKey}}</p>
+                    <p><b>Member Name:</b> {{acct.first_name}} {{acct.middle_name}} {{acct.last_name}}</p>
+                    <p><b>Physical Address:</b> {{acct.phys_address}} {{acct.phys_city}} {{acct.phys_state}} {{acct.phys_zip}}</p>
+                    <p><b>Mail Address:</b> {{acct.mail_address}} {{acct.mail_city}} {{acct.mail_state}} {{acct.mail_zip}}</p>
+                    <p><b>Member Phone:</b> {{acct.phone}}</p>
+                    <p><b>Member Phone 2:</b> {{acct.phone2}}</p>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row">
+                    <form action="{{url_for('main.follow_ups', id=acct.varClientKey)}}" method="post" novalidate style="width: 100%; height: 50%;">
+                        {{ form.hidden_tag() }}
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon">{{follow_form.loan_numb.label}}</span>
+                                {{follow_form.loan_numb(class="form-control")}}
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon">{{follow_form.delq_days.label}}</span>
+                                {{follow_form.delq_days(class="form-control")}}
+                            </div>
+                        </div>
+                        <div class="col-md-12" style="margin-top: 5px;">
+                            {{follow_form.detail(style="width: 100%; height: 50px;", id="text_edit")}}
+
+                                {% for error in follow_form.detail.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
+
+                            {{follow_form.submit(class="btn btn-sm btn-view")}}
+                        </div>
+                    </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+
+        {% if acct.get_follow_ups() %}
+
+        <div class="col-md-12"><hr></div>
+
+        <div class="col-md-12">
+            <button class="btn btn-view table_toggle" style="float: right; margin-bottom: 15px;" type="button">Toggle Follow Up Table</button>
+        </div>
+
+        <div class="col-md-12" id="table_display" style="display: none;">
+
+            <table class="table table-condensed" id="table_id">
+                <thead style="background-color: #007dc3; color: white;">
+                <tr>
+                    <th>Date</th>
+                    <th>Entered By</th>
+                    <th>Detail</th>
+                    <th>View</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for follow in acct.get_follow_ups() %}
+                    <tr>
+                        <td>{{follow.dateEntered}}</td>
+                        <td>{{follow.varEnteredBy}}</td>
+                        <td>{{follow.txtDetails|truncate(100, True)|safe}}</td>
+                        <td><a class="btn btn-view" href="{{url_for('main.follow_view', id=follow.key)}}"><span class="glyphicon glyphicon-open"></span> View</a></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+
+        <div class="col-md-12" id="table_short">
+
+                <table class="table table-condensed" id="table_reduce">
+                    <thead style="background-color: #007dc3; color: white;">
+                    <tr>
+                        <th style="width: 100px;">Date</th>
+                        <th style="width: 100px;">Entered By</th>
+                        <th style="width: 100px;">Delinquent</th>
+                        <th>Detail</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for follow in acct.get_last_follow() %}
+                        <tr>
+                            <td>{{follow.dateEntered}}</td>
+                            <td>{{follow.varEnteredBy}}</td>
+                            <td>{{follow.delq_days}}</td>
+                            <td>{{follow.txtDetails|safe}}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+        </div>
+        {% endif %}
+
+    </div>
+    <br>
+<script>
+$(document).ready(function() {
+$.noConflict();
+    $("#table_id").DataTable();
+    $('#text_edit').cleditor(
+    {
+        height: 150,
+        controls: "bold italic underline strikethrough subscript superscript | font size " +
+                  "style | color highlight removeformat | bullets numbering | outdent " +
+                  "indent | alignleft center alignright justify | undo redo | "
+    });
+
+    table_toggle("table_toggle", "table_display", "table_short");
+});
+</script>
+{% endblock %}

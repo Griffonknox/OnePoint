@@ -1,0 +1,29 @@
+<div class="col-md-3">
+    <h3>Account Query</h3>
+</div>
+
+<div class="col-md-6" style="margin-top: 15px;">
+    <form action="{{url_for('main.search_account')}}" method="post" novalidate>
+        {{ form.hidden_tag() }}
+        <div class="input-group">
+            <span class="input-group-addon">{{form.acct_numb.label}}</span>
+            {{form.acct_numb(class="form-control")}}
+            <span class="input-group-btn">{{form.submit(class="btn btn-view")}}</span>
+        </div>
+    </form>
+    {% for error in form.acct_numb.errors %}
+    <span style="color: red;">[{{ error }}]</span>
+    {% endfor %}
+</div>
+
+<div class="col-md-1" style="margin-top: 10px;">
+    <a class="" href="{{url_for('main.search_account')}}" >Clear Search</a>
+</div>
+
+<div class="col-md-2" style="margin-top: 15px;">
+    <a class="btn btn-view" href="{{url_for('main.create_account')}}" style="float: right;">Create Account</a>
+</div>
+
+<div class="col-md-12">
+    <hr>
+</div>

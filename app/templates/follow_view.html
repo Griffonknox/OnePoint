@@ -1,0 +1,26 @@
+{% extends 'template.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+<div class="row">
+  <div class="col-md-12">
+    <h3 clas="mb-2">View Follow Up:</h3>
+  </div>
+
+    <div class="col-md-6">
+        <p><b>Date:</b> {{follow.dateEntered}}</p>
+        <p><b>Entered By:</b> {{follow.varEnteredBy}}</p>
+    </div>
+
+    <div class="col-md-6">
+        <p><b>Loan #:</b> {{follow.varLoanNo}}</p>
+        <p><b>Delinquet Days:</b> {{follow.delq_days}}</p>
+    </div>
+
+    <div class="col-md-12">
+        <p><b>Detail:</b></p>
+        <div>{{follow.txtDetails | safe}}</div>
+    </div>
+
+</div>
+{% endblock %}

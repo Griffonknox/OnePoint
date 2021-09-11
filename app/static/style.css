@@ -1,0 +1,22 @@
+.cell {
+    background-color: white;
+    padding: 15px;
+    border-radius: 5px;
+    box-shadow: 0 5px 10px black;
+}
+
+#nav_bar {
+    background-color: #007dc3;
+    box-shadow: 0 5px 10px black;
+    border-color: #007dc3;
+}
+
+.btn-view {
+    background-color: #007dc3;
+    color: white;
+}
+
+.nav-view {
+    color: white !important;
+}
+
