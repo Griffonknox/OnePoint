@@ -1,7 +1,7 @@
 from app.main import bp
 from flask import render_template, request, flash, url_for, redirect
 from flask_login import current_user, login_required
-from app.main.forms import AcctSearchForm, AccountForm, AccountDetailForm, AccountFollowUpForm, AccountAlertForm, AccountEditForm
+from app.main.forms import AcctSearchForm, AccountForm, AccountDetailForm, AccountFollowUpForm, AccountAlertForm, AccountEditForm, ReportSearchForm
 from app import db
 from app.models import Acct_memb, Follow_Up, Alert
 from datetime import datetime
@@ -29,7 +29,6 @@ def display_account(id):
     acct = Acct_memb.query.get(int(id))
     detail_form = AccountDetailForm()
     if detail_form.validate_on_submit():
-        print(detail_form.detail.data)
         acct.detail = detail_form.detail.data
         db.session.commit()
         flash("Detail Added to Account.")
@@ -78,6 +77,9 @@ def follow_ups(id):
     acct = Acct_memb.query.get(int(id))
     form = AcctSearchForm()
     follow_form = AccountFollowUpForm()
+
+    follow_form.loan_numb.choices = [("all", "all")] + [(str(l.loan_numb), str(l.loan_numb)) for l in acct.get_loans()]
+
     if follow_form.validate_on_submit():
         follow = Follow_Up(varClientKey=int(id), txtDetails=follow_form.detail.data, varLoanNo=follow_form.loan_numb.data,
                            delq_days=follow_form.delq_days.data, varEnteredBy=current_user.username, dateEntered=datetime.today().strftime("%m/%d/%Y"))
@@ -85,10 +87,6 @@ def follow_ups(id):
         db.session.commit()
         flash("Follow Up Successfully Created.")
         return redirect(url_for("main.follow_ups", id=int(id)))
-
-    elif request.method == 'GET':
-        loan_list2 = [(l.loan_numb, l.loan_numb) for l in acct.get_loans()]
-        follow_form.loan_numb.choices = [("all", "all")] + loan_list2
 
     return render_template("follow_ups.html", acct=acct, form=form, follow_form=follow_form)
 
@@ -119,3 +117,15 @@ def loans(id):
     form = AcctSearchForm()
     acct = Acct_memb.query.get(int(id))
     return render_template("loans.html", acct=acct, form=form)
+
+
+
+@bp.route("/reports", methods=["GET", "POST"])
+@login_required
+def reports():
+    form = ReportSearchForm()
+    if form.validate_on_submit():
+        acct = Acct_memb.query.get(form.acct_numb.data)
+        reports = acct.get_follow_ups()
+        return render_template("reports.html", form=form, reports=reports, acct=acct)
+    return render_template("reports.html", form=form)

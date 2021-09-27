@@ -35,12 +35,18 @@
                             <div class="input-group">
                                 <span class="input-group-addon">{{follow_form.loan_numb.label}}</span>
                                 {{follow_form.loan_numb(class="form-control")}}
+                                {% for error in follow_form.loan_numb.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="input-group">
                                 <span class="input-group-addon">{{follow_form.delq_days.label}}</span>
                                 {{follow_form.delq_days(class="form-control")}}
+                                {% for error in follow_form.delq_days.errors %}
+                                <span style="color: red;">[{{ error }}]</span>
+                                {% endfor %}
                             </div>
                         </div>
                         <div class="col-md-12" style="margin-top: 5px;">

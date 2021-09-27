@@ -1,0 +1,167 @@
+{% extends 'template.html' %}
+{% import 'bootstrap/wtf.html' as wtf %}
+
+{% block app_content %}
+    <div class="row">
+
+        <div class="col-md-12">
+            <h3>Reports:</h3>
+        </div>
+
+        <div class="col-md-12">
+            <div class="row cell">
+                <form action="" method="post" novalidate style="width: 100%; height: 50%;">
+                    {{ form.hidden_tag() }}
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <span class="input-group-addon">{{form.acct_numb.label}}</span>
+                            {{form.acct_numb(class="form-control")}}
+                        </div>
+                        {% for error in form.acct_numb.errors %}
+                        <span style="color: red;">[{{ error }}]</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-addon">{{form.date_from.label}}</span>
+                            {{form.date_from(class="form-control")}}
+                        </div>
+                            {% for error in form.date_from.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                    </div>
+
+                    <div class="col-md-3">
+                        <div class="input-group">
+                            <span class="input-group-addon">{{form.date_to.label}}</span>
+                            {{form.date_to(class="form-control")}}
+                        </div>
+                            {% for error in form.date_to.errors %}
+                            <span style="color: red;">[{{ error }}]</span>
+                            {% endfor %}
+                    </div>
+
+                    <div class="col-md-2">
+                        {{form.submit(class="btn btn-sm btn-view")}}
+                    </div>
+
+                </form>
+            </div>
+        </div>
+
+
+        {% if reports %}
+        <div class="col-md-7">
+            <h3>Report Information:</h3>
+        </div>
+        <div class="col-md-5" style="margin-top: 15px;">
+            <button class="btn btn-sm btn-view" id="create_pdf" type="button" style="float: right;">Generate PDF</button>
+        </div>
+
+        <div class="col-md-12 cell">
+            <div class="row" id="canvas_id">
+
+                <div class="col-md-8">
+                    <h4>South Texas Federal Credit Union</h4>
+                </div>
+
+                <div class="col-md-4">
+                    <img src="{{ url_for('static',filename='img/logo.png') }}" style="width: 5em; float: right;">
+                </div>
+
+                <div class="col-md-6">
+                    <p><b>Account Number:</b> {{acct.varClientKey}}</p>
+                    <p><b>Account Name:</b> {{acct.first_name}} {{acct.middle_name}} {{acct.last_name}}</p>
+                    <p><b>Account Address:</b> {{acct.phys_address}} {{acct.phys_city}} {{acct.phys_state}} {{acct.phys_zip}}</p>
+                </div>
+
+
+                <div class="col-md-6">
+                    Check if alerts to display
+                </div>
+
+                <div class="col-md-12">
+                    <hr>
+                </div>
+
+                <div class="col-md-12">
+
+                    {% for f_ in acct.get_follow_ups()  %}
+
+                            <div class="row">
+                                <div class="col-md-4"><b>Date:</b> {{f_.dateEntered}}</div>
+                                <div class="col-md-4"><b>Entered By:</b> {{f_.varEnteredBy}}</div>
+                                <div class="col-md-2"><b>Loan #:</b> {{f_.varLoanNo}}</div>
+                                <div class="col-md-12"><b>Detail:</b> <span class="dtl">{{f_.txtDetails}}</span></div>
+                            </div>
+                            <br>
+                    {% endfor %}
+
+            </div>
+
+            </div>
+        </div>
+
+
+
+
+        <!-- Modal -->
+        <div id="myModal" class="modal">
+            <div class="pdf-content">
+                <div id="modal_pdf" class="canvas_div_pdf"></div>
+            </div>
+        </div>
+
+        {% endif %}
+
+    </div>
+<script>
+$(document).ready(function() {
+
+
+$('#modal_pdf').html($('#canvas_id').clone());
+
+var modal = document.getElementById("myModal");
+
+
+$('#create_pdf').click(function() {
+console.log("testbutton");
+    modal.style.display = "block";
+
+    var name = this.value;
+
+    var HTML_Width = $(".canvas_div_pdf").width();
+    var HTML_Height = $(".canvas_div_pdf").height();
+    var top_left_margin = 15;
+    var PDF_Width = HTML_Width+(top_left_margin*2);
+    var PDF_Height = (PDF_Width*1.5)+(top_left_margin*2);
+    var canvas_image_width = HTML_Width;
+    var canvas_image_height = HTML_Height;
+
+    var totalPDFPages = Math.ceil(HTML_Height/PDF_Height)-1;
+
+
+    html2canvas($(".canvas_div_pdf")[0],{allowTaint:true}).then(function(canvas) {
+        canvas.getContext('2d');
+
+        console.log(canvas.height+"  "+canvas.width);
+
+
+        var imgData = canvas.toDataURL("image/jpeg", 1.0);
+        var pdf = new jsPDF('p', 'pt',  [PDF_Width, PDF_Height]);
+        pdf.addImage(imgData, 'JPG', top_left_margin, top_left_margin,canvas_image_width,canvas_image_height);
+
+
+        for (var i = 1; i <= totalPDFPages; i++) {
+            pdf.addPage(PDF_Width, PDF_Height);
+            pdf.addImage(imgData, 'JPG', top_left_margin, -(PDF_Height*i)+(top_left_margin*4),canvas_image_width,canvas_image_height);
+        }
+
+        pdf.save("Report_Acct_" +name + ".pdf");
+    });
+});
+
+});
+</script>
+{% endblock %}

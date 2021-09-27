@@ -3,10 +3,10 @@ from wtforms import StringField, PasswordField, BooleanField, SubmitField, Integ
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo, Optional
 from wtforms.widgets import html5 as h5widgets
 from app.models import Acct_memb
-
+from wtforms.fields.html5 import DateField
 
 class AcctSearchForm(FlaskForm):
-    acct_numb = IntegerField('Account Number', widget=h5widgets.NumberInput(min=0, max=100000, step=.01))
+    acct_numb = IntegerField('Account Number', widget=h5widgets.NumberInput(min=0, max=100000, step=.01), validators=[DataRequired()])
     submit = SubmitField('Search Account')
 
     def validate_acct_numb(self, acct_numb):
@@ -43,9 +43,9 @@ class AccountDetailForm(FlaskForm):
 
 class AccountFollowUpForm(FlaskForm):
     # loan_numb = StringField("Loan Number", validators=[Optional()], render_kw={"maxlength": "25"})
-    loan_numb = SelectField("Loan Number")
+    loan_numb = SelectField("Loan Number", validators=[Optional()])
     delq_days = StringField("Delinquent Days", validators=[Optional()], render_kw={"maxlength": "20"})
-    detail = TextAreaField("Detail", validators=[DataRequired()], render_kw={"maxlength": "5000"})
+    detail = TextAreaField("Detail", validators=[Optional()], render_kw={"maxlength": "5000"})
     submit = SubmitField("Create Follow Up")
 
 
@@ -70,3 +70,10 @@ class AccountEditForm(FlaskForm):
     phone = StringField("Phone", validators=[DataRequired()], render_kw={"maxlength": "20"})
     phone2 = StringField("Phone 2", validators=[Optional()], render_kw={"maxlength": "20"})
     submit = SubmitField("Edit Account")
+
+
+class ReportSearchForm(FlaskForm):
+    acct_numb = IntegerField('Account Number', widget=h5widgets.NumberInput(min=0, max=100000, step=.01), validators=[DataRequired()])
+    date_from = DateField("Date From", validators=[DataRequired()])
+    date_to = DateField("Date To", validators=[DataRequired()])
+    submit = SubmitField("Create Report")
