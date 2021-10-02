@@ -82,7 +82,7 @@ def follow_ups(id):
 
     if follow_form.validate_on_submit():
         follow = Follow_Up(varClientKey=int(id), txtDetails=follow_form.detail.data, varLoanNo=follow_form.loan_numb.data,
-                           delq_days=follow_form.delq_days.data, varEnteredBy=current_user.username, dateEntered=datetime.today().strftime("%m/%d/%Y"))
+                           delq_days=follow_form.delq_days.data, varEnteredBy=current_user.username)
         db.session.add(follow)
         db.session.commit()
         flash("Follow Up Successfully Created.")
@@ -104,7 +104,7 @@ def alerts(id):
     alert_form = AccountAlertForm()
     if alert_form.validate_on_submit():
         alert = Alert(varClientKey=int(id), varEnteredBy=current_user.username, Alert_Detail=alert_form.detail.data,
-                      Alert_Cat=alert_form.category.data, dateEntered=datetime.today().strftime("%m/%d/%Y"))
+                      Alert_Cat=alert_form.category.data)
         db.session.add(alert)
         db.session.commit()
         flash("Alert Successfully Created.")
@@ -126,6 +126,16 @@ def reports():
     form = ReportSearchForm()
     if form.validate_on_submit():
         acct = Acct_memb.query.get(form.acct_numb.data)
-        reports = acct.get_follow_ups()
-        return render_template("reports.html", form=form, reports=reports, acct=acct)
+        alerts = acct.get_alerts()
+
+        if form.date_from.data and not form.date_to.data:
+            reports = acct.follow_ups.filter(Follow_Up.dateEntered >= form.date_from.data).all()
+        elif form.date_to.data and not form.date_from.data:
+            reports = acct.follow_ups.filter(Follow_Up.dateEntered <= form.date_to.data).all()
+        elif form.date_to.data and form.date_from.data:
+            reports = acct.follow_ups.filter(Follow_Up.dateEntered.between(form.date_from.data, form.date_to.data)).all()
+        else:
+            reports = acct.get_follow_ups()
+
+        return render_template("reports.html", form=form, reports=reports, acct=acct, alerts=alerts)
     return render_template("reports.html", form=form)

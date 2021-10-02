@@ -78,7 +78,10 @@
 
 
                 <div class="col-md-6">
-                    Check if alerts to display
+                    {% if alerts %}
+                        <p><b>Alert Category:</b> {{alerts[0].Alert_Cat}}</p>
+                        <p><b>Alert Detail:</b> <span class="dtl">{{alerts[0].Alert_Detail|safe}}</span></p>
+                    {% endif %}
                 </div>
 
                 <div class="col-md-12">
@@ -107,7 +110,7 @@
 
 
         <!-- Modal -->
-        <div id="myModal" class="modal">
+        <div id="pdfModal">
             <div class="pdf-content">
                 <div id="modal_pdf" class="canvas_div_pdf"></div>
             </div>
@@ -122,11 +125,10 @@ $(document).ready(function() {
 
 $('#modal_pdf').html($('#canvas_id').clone());
 
-var modal = document.getElementById("myModal");
+var modal = document.getElementById("pdfModal");
 
 
 $('#create_pdf').click(function() {
-console.log("testbutton");
     modal.style.display = "block";
 
     var name = this.value;
@@ -159,6 +161,7 @@ console.log("testbutton");
         }
 
         pdf.save("Report_Acct_" +name + ".pdf");
+        modal.style.display = "none";
     });
 });
 

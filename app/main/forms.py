@@ -74,6 +74,11 @@ class AccountEditForm(FlaskForm):
 
 class ReportSearchForm(FlaskForm):
     acct_numb = IntegerField('Account Number', widget=h5widgets.NumberInput(min=0, max=100000, step=.01), validators=[DataRequired()])
-    date_from = DateField("Date From", validators=[DataRequired()])
-    date_to = DateField("Date To", validators=[DataRequired()])
+    date_from = DateField("Date From", validators=[Optional()])
+    date_to = DateField("Date To", validators=[Optional()])
     submit = SubmitField("Create Report")
+
+    def validate_acct_numb(self, acct_numb):
+        acct = Acct_memb.query.get(int(acct_numb.data))
+        if acct is None:
+            raise ValidationError("Account Not Found")

@@ -39,10 +39,10 @@ class Acct_memb(db.Model):
         return self.follow_ups.all()
 
     def get_last_follow(self):
-        return self.follow_ups.order_by(desc(Follow_Up.key)).limit(5)
+        return self.follow_ups.order_by(desc(Follow_Up.dateEntered)).limit(5)
 
     def get_alerts(self):
-        return self.alerts.all()
+        return self.alerts.order_by(desc(Alert.dateEntered)).all()
 
     def get_loans(self):
         return self.loans.all()
