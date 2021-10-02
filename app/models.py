@@ -6,6 +6,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app import db, login
 from flask_login import UserMixin
 from sqlalchemy import desc
+import datetime
 
 
 
@@ -55,9 +56,6 @@ class Acct_loans(db.Model):
     loan_numb = db.Column(db.String(25))
     acctnolnno = db.Column(db.Integer())
     balance = db.Column(db.String(20))
-    varEnteredBy = db.Column(db.String(100))
-    dateEntered = db.Column(db.String(50))  # change to date type column remove if auto download?
-
 
 class Alert(db.Model):
     __tablename__ = "alert"
@@ -65,7 +63,7 @@ class Alert(db.Model):
     varClientKey = db.Column(db.Integer(), db.ForeignKey("memb_account.varClientKey"))
     Alert_Cat = db.Column(db.String(20))
     varEnteredBy = db.Column(db.String(100))
-    dateEntered = db.Column(db.String(50))  # change to date type column
+    dateEntered = db.Column(db.DateTime, index=True, default=datetime.datetime.today())  # change to date type column
     Alert_Detail = db.Column(db.String(5000))
 
 
@@ -74,7 +72,7 @@ class Follow_Up(db.Model):
     key = db.Column(db.Integer(), primary_key=True, autoincrement=True)
     varClientKey = db.Column(db.Integer(), db.ForeignKey("memb_account.varClientKey"))
     varEnteredBy = db.Column(db.String(100))
-    dateEntered = db.Column(db.String(50))  # change to datetime column
+    dateEntered = db.Column(db.DateTime, index=True, default=datetime.datetime.today())  # change to datetime column
     txtDetails = db.Column(db.String(5000))
     varLoanNo = db.Column(db.String(25))
     delq_days = db.Column(db.String(20))
